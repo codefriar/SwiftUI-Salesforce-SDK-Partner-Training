@@ -14,14 +14,17 @@ import SmartStore
 
 // swiftlint:disable:next type_name
 class Env: ObservableObject {
-  let soupName = "MostAwesomeSoup"
+  // Lazy properties
   lazy var sfUserObject = UserAccountManager.shared.currentUserAccount!
   lazy var customOfflineStore = SmartStore.shared(withName: "customStore", forUserAccount: self.sfUserObject)
   lazy var customSoup = customOfflineStore?.registerSoup(withName: soupName, withIndexPaths: ["foo", "id"])
+
   @Published var queryResults: [String:Any] = [:]
-  @Published var foo: String = ""
+  @Published var propertyToDisplay: String = ""
   var contactId:String?
 
+  private let soupName = "MostAwesomeSoup"
+  private var iterationCounter = 0
   private var customSoupPublisher: AnyCancellable?
   private var cancellable: AnyCancellable?
   private var pipeline: AnyPublisher<Bool, Error>?
@@ -45,11 +48,12 @@ class Env: ObservableObject {
       }
       .replaceError(with: [:])
       .assign(to: \.queryResults, on:self)
-    self.foo = self.queryResults["foo"] as? String ?? ""
+    self.propertyToDisplay = self.queryResults["foo"] as? String ?? ""
   }
 
   public func updateSoupRecord() {
-    queryResults["foo"] = "New Value"
+    queryResults["foo"] = "New Value \(self.iterationCounter)"
+    self.iterationCounter += 1
     do {
       try customOfflineStore?.upsert(entries: [queryResults], forSoupNamed: soupName, withExternalIdPath: "id")
     } catch {
@@ -66,7 +70,7 @@ class Env: ObservableObject {
       }
       .replaceError(with: [:])
       .assign(to: \.queryResults, on:self)
-    self.foo = self.queryResults["foo"] as? String ?? ""
+    self.propertyToDisplay = self.queryResults["foo"] as? String ?? ""
   }
 
   /*

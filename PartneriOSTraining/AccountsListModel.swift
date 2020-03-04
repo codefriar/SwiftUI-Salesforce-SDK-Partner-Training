@@ -66,6 +66,7 @@ class AccountsListModel: ObservableObject {
   private func loadFromSmartStore() {
     // swiftlint:disable:next line_length
     fetchAccountsCancellable = self.store?.publisher(for: "select {AccountSoup:Name}, {AccountSoup:Phone}, {AccountSoup:Industry}, {AccountSoup:Id} from {AccountSoup}")
+    .print("Pulling Accounts From Smart Store")
       .receive(on: RunLoop.main)
       .tryMap {
         $0.map { (row) -> Account in

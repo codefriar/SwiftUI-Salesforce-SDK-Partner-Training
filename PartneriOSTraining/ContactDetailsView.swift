@@ -29,38 +29,6 @@ import SalesforceSDKCore
 import CodeScanner
 import MapKit
 
-struct FieldView: View {
-  var label: String
-  var value: String?
-
-  var body: some View {
-    return HStack(spacing: 10) {
-      VStack(alignment: .leading, spacing: 3) {
-        Text(value ?? "None listed")
-        Text(label).font(.subheadline).italic()
-      }
-    }
-  }
-}
-
-struct AddressView: View {
-  var contact: Contact
-
-  var body: some View {
-    return HStack(spacing: 10) {
-      VStack(alignment: .leading, spacing: 3) {
-        HStack(spacing: 10) {
-          Text(contact.MailingStreet ?? "")
-          Text(contact.MailingCity ?? "")
-          Text(contact.MailingState ?? "")
-          Text(contact.MailingPostalCode ?? "")
-        }
-        Text("Address").font(.subheadline).italic()
-      }
-    }
-  }
-}
-
 struct ContactDetailView: View {
   @Binding var contact: Contact
   @Environment(\.editMode) var mode
@@ -110,10 +78,10 @@ struct ContactDetailView: View {
       } else {
         ContactEditView(contact: $contact)
           .onDisappear {
-            self.updateCancellable = RestClient.shared.updateContact(self.contact)
+            self.updateCancellable = self.contact.updateSalesforce()
               .receive(on: RunLoop.main)
-              .sink { _ in
-
+              .sink { result in
+                print(result)
             }
         }
       }

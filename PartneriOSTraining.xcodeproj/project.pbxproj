@@ -32,6 +32,8 @@
 		B510CAB72402BD5B00B23F9A /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = B510CAB62402BD5B00B23F9A /* Contact.swift */; };
 		B510CAB92402BEDA00B23F9A /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = B510CAB82402BEDA00B23F9A /* Account.swift */; };
 		B510CABC2402C8BA00B23F9A /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B510CABB2402C8BA00B23F9A /* Repository.swift */; };
+		B510CAC12404245700B23F9A /* FieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B510CAC02404245700B23F9A /* FieldView.swift */; };
+		B510CAC32404248200B23F9A /* AddressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B510CAC22404248200B23F9A /* AddressView.swift */; };
 		B573120223FD80DC006DF5C1 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = B573120123FD80DC006DF5C1 /* Env.swift */; };
 		B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */; };
 		B73B520D234FA65F001B069B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73B520C234FA65F001B069B /* SceneDelegate.swift */; };
@@ -68,6 +70,8 @@
 		B510CAB62402BD5B00B23F9A /* Contact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		B510CAB82402BEDA00B23F9A /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		B510CABB2402C8BA00B23F9A /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
+		B510CAC02404245700B23F9A /* FieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldView.swift; sourceTree = "<group>"; };
+		B510CAC22404248200B23F9A /* AddressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressView.swift; sourceTree = "<group>"; };
 		B573120123FD80DC006DF5C1 /* Env.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
 		B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		B73B520C234FA65F001B069B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -92,14 +96,12 @@
 		4F13E944237DD626005BCAE9 /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				B510CABF24041E1400B23F9A /* Components */,
 				B73B520C234FA65F001B069B /* SceneDelegate.swift */,
 				4F13E939237DD5D9005BCAE9 /* AccountsListView.swift */,
 				4F13E938237DD5D9005BCAE9 /* ContactsForAccountListView.swift */,
 				4F13E936237DD5D9005BCAE9 /* ContactDetailsView.swift */,
 				B505BB8723FE3B5000218AD4 /* ContactEditView.swift */,
-				B505BB962400366500218AD4 /* PhotosAndImagePickerView.swift */,
-				B505BB982400614F00218AD4 /* Toast.swift */,
-				B507DC2A240100D200DC04E4 /* MapView.swift */,
 			);
 			name = SwiftUI;
 			sourceTree = "<group>";
@@ -189,6 +191,18 @@
 				B505BB9A240063AB00218AD4 /* View.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		B510CABF24041E1400B23F9A /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				B507DC2A240100D200DC04E4 /* MapView.swift */,
+				B505BB982400614F00218AD4 /* Toast.swift */,
+				B505BB962400366500218AD4 /* PhotosAndImagePickerView.swift */,
+				B510CAC02404245700B23F9A /* FieldView.swift */,
+				B510CAC22404248200B23F9A /* AddressView.swift */,
+			);
+			name = Components;
 			sourceTree = "<group>";
 		};
 		DDFDDF0A29E4BDD114B51BBC /* Pods */ = {
@@ -350,6 +364,7 @@
 				B505BB992400614F00218AD4 /* Toast.swift in Sources */,
 				4F13E93B237DD5D9005BCAE9 /* ContactDetailsView.swift in Sources */,
 				B505BB8B23FF278000218AD4 /* Optional.swift in Sources */,
+				B510CAC32404248200B23F9A /* AddressView.swift in Sources */,
 				B510CABC2402C8BA00B23F9A /* Repository.swift in Sources */,
 				4F13E947237DD72E005BCAE9 /* AccountsListModel.swift in Sources */,
 				B505BB972400366600218AD4 /* PhotosAndImagePickerView.swift in Sources */,
@@ -359,6 +374,7 @@
 				4F13E93D237DD5D9005BCAE9 /* ContactsForAccountListView.swift in Sources */,
 				4F13E93E237DD5D9005BCAE9 /* AccountsListView.swift in Sources */,
 				B510CAB72402BD5B00B23F9A /* Contact.swift in Sources */,
+				B510CAC12404245700B23F9A /* FieldView.swift in Sources */,
 				4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */,
 				B505BB8823FE3B5000218AD4 /* ContactEditView.swift in Sources */,
 				B505BB9B240063AB00218AD4 /* View.swift in Sources */,
@@ -487,6 +503,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PartneriOSTraining/PartneriOSTraining.entitlements;
+				DEVELOPMENT_TEAM = 745ST2PM9F;
 				INFOPLIST_FILE = PartneriOSTraining/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -507,6 +524,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PartneriOSTraining/PartneriOSTraining.entitlements;
+				DEVELOPMENT_TEAM = 745ST2PM9F;
 				INFOPLIST_FILE = PartneriOSTraining/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (

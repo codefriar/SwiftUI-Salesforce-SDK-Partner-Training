@@ -20,6 +20,26 @@ extension RestClient {
   typealias SalesforceRecord = [String:Any]
   typealias SalesforceRecords = [SalesforceRecord]
 
+  func records<Record: Decodable>(forRequest request:RestRequest ) -> AnyPublisher<[Record], Never> {
+    return RestClient.shared.publisher(for: request)
+      .tryMap({ (response) -> Data in
+        response.asData()
+      })
+      .decode(type: SFResponse<Record>.self, decoder: JSONDecoder())
+      .map({ (record) -> [Record] in
+        record.records
+      })
+      .catch({ _ in
+        Just([Record]())
+      })
+      .eraseToAnyPublisher()
+  }
+
+  func records<Record: Decodable>(forQuery query:String) -> AnyPublisher<[Record], Never> {
+    let request = RestClient.shared.request(forQuery: query, apiVersion: RestClient.apiVersion)
+    return self.records(forRequest: request)
+  }
+
   func updateContact(_ contact: Contact) -> AnyPublisher<Bool, Never> {
     return self.updateRecord(withObjectType: "Contact", fields: contact.asDictionary())
   }
@@ -44,7 +64,6 @@ extension RestClient {
       )
     }
     let compositeRequest = compositeRequestBuilder.buildCompositeRequest(RestClient.apiVersion)
-    print("Halting for composite Requests")
     return self.publisher(for: compositeRequest)
       .map { $0.subResponses }
       .map { return $0.map { subResponse in return subResponse.httpStatusCode} }
@@ -75,12 +94,11 @@ extension RestClient {
 
   private func createReturningId(request: RestRequest) -> AnyPublisher<String?, Never> {
     return self.publisher(for: request)
-      .print("Create Account")
       .tryMap { try $0.asJson() as? RestClient.JSONKeyValuePairs ?? [:]}
       .tryMap { keyValuePairs in
         guard let id = keyValuePairs["id"] as? String else {return ""}
         return id
-      }
+    }
       //.map { $0["id"] as! String?}
       .replaceError(with: "")
       .eraseToAnyPublisher()
@@ -107,6 +125,47 @@ extension RestClient {
                   "FirstPublishLocationId": id
     ]
     return self.requestForCreate(withObjectType: "ContentVersion", fields: record, apiVersion: RestClient.apiVersion)
+  }
+
+  func fetchRecords<Record: Decodable>(ofModelType: Record.Type, forRequest request: RestRequest,
+                       _ completionBlock: @escaping (Result<[Record], RestClientError>) -> Void) {
+    guard request.isQueryRequest else { return }
+    RestClient.shared.send(request: request) { result in
+      switch result {
+        case .success(let response):
+          do {
+              let decoder = JSONDecoder()
+            let wrapper = try decoder.decode(SFResponse<Record>.self, from: response.asData())
+            completionBlock(.success(wrapper.records))
+          } catch {
+            completionBlock(.success([Record]()))
+        }
+        case .failure(let err):
+          completionBlock(.failure(err))
+      }
+    }
+  }
+
+  func fetchRecords<Record: Decodable>(ofModelType: Record.Type,
+                                       forQuery query: String,
+                                       withApiVersion version: String? = SFRestDefaultAPIVersion,
+                                       _ completionBlock: @escaping (Result<[Record], RestClientError>) -> Void) {
+    let request = RestClient.shared.request(forQuery: query, apiVersion: version)
+    guard request.isQueryRequest else { return }
+    return self.fetchRecords(ofModelType: ofModelType, forRequest: request, completionBlock)
+  }
+
+}
+
+extension RestRequest {
+
+  /// Calculated property to determine if this request is a data retrieval request with a SOQL query.
+  /// All such queries will return a JSON decodable QueryResponseWrapper.
+  /// Implied contract is that all requests matching both properties here will be decodable via QueryResponseWrapper<Record>
+  public var isQueryRequest: Bool {
+    get {
+      return self.method == .GET && self.path.lowercased().hasSuffix("query")
+    }
   }
 
 }

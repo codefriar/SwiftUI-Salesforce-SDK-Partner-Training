@@ -35,6 +35,7 @@ struct MapView: UIViewRepresentable {
     var mkMapView: MKMapView!
     let regionRadius = 150.0
     let contactName: String
+    var firstPlacemark: CLPlacemark?
 
     init(_ parent: MapView, contactName:String) {
       self.parent = parent
@@ -75,12 +76,14 @@ struct MapView: UIViewRepresentable {
             return
         }
 
+        self.firstPlacemark = placemarks.first
         location = firstLocation
         self.centerMap(on: firstLocation)
         let annotation = MKPointAnnotation()
         annotation.coordinate = firstLocation.coordinate
         annotation.title = self.contactName
         annotation.subtitle = address
+
         self.mkMapView.addAnnotation(annotation)
       }
       return location
@@ -95,6 +98,41 @@ struct MapView: UIViewRepresentable {
 
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
       _ = CLLocation(latitude: mapView.centerCoordinate.latitude, longitude: mapView.centerCoordinate.longitude)
+    }
+
+    func mapView(_ mapView: MKMapView,
+                 viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+
+      if annotation is MKUserLocation {
+        return nil
+      }
+
+      let reuseId = "ContactLocation"
+      let button = UIButton()
+//      button.setTitle("Open", for: .normal)
+      button.setImage(UIImage(systemName: "map.fill"), for: .normal)
+      button.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+      var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
+      if pinView == nil {
+        pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+        pinView!.canShowCallout = true
+        pinView!.animatesDrop = true
+        pinView!.pinTintColor = .purple
+        pinView!.rightCalloutAccessoryView = button
+      } else {
+        pinView!.annotation = annotation
+      }
+
+      return pinView
+    }
+
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+      guard let location = self.firstPlacemark?.location else {return}
+      let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: location.coordinate, addressDictionary: ["name":self.contactName]))
+      mapItem.name = self.contactName
+
+      let launchOptions = [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving]
+      mapItem.openInMaps(launchOptions: launchOptions)
     }
   }
 

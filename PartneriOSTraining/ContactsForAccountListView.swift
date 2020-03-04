@@ -57,7 +57,7 @@ struct ContactsForAccountListView: View {
       self.viewModel.fetchContactsForAccount()
     }
     .sheet(isPresented: $isShowingScanner) {
-      CodeScannerView(codeTypes: [.qr], simulatedData: "Kevin Poorman\nkjp@Codefriar.com", completion: self.handleScan)
+      CodeScannerView(codeTypes: [.qr, .code128, .upce, .code128, .aztec], simulatedData: "Kevin Poorman\nkjp@Codefriar.com", completion: self.handleScan)
     }
   }
 

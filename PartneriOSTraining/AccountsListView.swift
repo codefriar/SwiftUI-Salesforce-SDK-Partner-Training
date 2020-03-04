@@ -40,7 +40,7 @@ struct AccountsListView: View {
       VStack {
         HStack {
           VStack {
-            Text(self.env.foo)
+            Text(self.env.propertyToDisplay)
             Button("Update SmartStore") {
               self.env.updateSoupRecord()
             }
