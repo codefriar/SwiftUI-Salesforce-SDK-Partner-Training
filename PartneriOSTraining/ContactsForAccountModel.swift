@@ -37,22 +37,40 @@ class ContactsForAccountModel: ObservableObject {
 
   func fetchContactsForAccount() {
     guard let acct = self.account else {return}
-    // // swiftlint:disable:next line_length
+    
+    // swiftlint:disable:next line_length
     let request = RestClient.shared.request(forQuery: "SELECT id, firstName, lastName, phone, email, mailingStreet, mailingCity, mailingState, mailingPostalCode, AccountId FROM Contact WHERE AccountID = '\(acct.id)'", apiVersion: nil)
-
-    contactsForCancellable = RestClient.shared.publisher(for: request)
+    
+    /*
+     * What follows is two different methods for achieving the same goal -
+     *  run a soql query, and generate Contact objects from the returned results
+     *  I hope this api will be available in the next release of the SDK. Failing
+     *  that, you can always take it from the RestClient extension included here.
+     *
+     * I'm including this here, so that you can compare and contrast, and ensure you
+     * understand what's happening with the Combine side of things
+     */
+    
+    // MARK: Swift 5, with Combine
+    contactsForCancellable = RestClient.shared.records(forRequest: request)
       .receive(on: RunLoop.main)
-      .tryMap({ (response) -> Data in
-        response.asData()
-      })
-      .decode(type: ContactResponse.self, decoder: JSONDecoder())
-      .map({ (record) -> [Contact] in
-        record.records
-      })
-      .catch({ _ in
+      .assign(to: \.contacts, on: self)
+    
 
-        return Just([])
-      })
-      .assign(to: \.contacts, on:self)
+    // MARK: Swift 4, without Combine
+    /*
+    RestClient.shared.fetchRecords(ofModelType: Contact.self, forRequest: request) { result in
+      switch result {
+        case .success(let records):
+          DispatchQueue.main.async {
+            self.contacts = records
+          }
+        case .failure(let error):
+          print(error)
+      }
+    }
+    */
+
+
   }
 }

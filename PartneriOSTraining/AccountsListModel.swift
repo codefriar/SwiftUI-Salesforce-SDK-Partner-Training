@@ -67,7 +67,7 @@ class AccountsListModel: ObservableObject {
     // swiftlint:disable:next line_length
     fetchAccountsCancellable = self.store?.publisher(for: "select {AccountSoup:Name}, {AccountSoup:Phone}, {AccountSoup:Industry}, {AccountSoup:Id} from {AccountSoup}")
       .handleEvents(receiveSubscription: { aValue in
-        print("receiveSubscription event called with \(String(describing: aValue))")
+    .print("Pulling Accounts From Smart Store")
       }, receiveOutput: { aValue in
         print("receiveOutput was invoked with \(String(describing: aValue))")
       }, receiveCompletion: { aValue in
