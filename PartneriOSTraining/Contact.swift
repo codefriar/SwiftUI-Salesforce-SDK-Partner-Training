@@ -63,8 +63,8 @@ struct ContactResponse: Decodable {
   var records: [Contact]
 }
 
-struct SFResponse<Record: Decodable>: Decodable {
+struct SFResponse<R: Decodable>: Decodable {
   var totalSize: Int
   var done: Bool
-  var records: [Record]
+  var records: [R]
 }

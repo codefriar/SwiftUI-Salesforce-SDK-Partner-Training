@@ -98,7 +98,7 @@ extension RestClient {
       .tryMap { keyValuePairs in
         guard let id = keyValuePairs["id"] as? String else {return ""}
         return id
-      }
+    }
       //.map { $0["id"] as! String?}
       .replaceError(with: "")
       .eraseToAnyPublisher()
@@ -125,6 +125,47 @@ extension RestClient {
                   "FirstPublishLocationId": id
     ]
     return self.requestForCreate(withObjectType: "ContentVersion", fields: record, apiVersion: RestClient.apiVersion)
+  }
+
+  func fetchRecords<Record: Decodable>(ofModelType: Record.Type, forRequest request: RestRequest,
+                       _ completionBlock: @escaping (Result<[Record], RestClientError>) -> Void) {
+    guard request.isQueryRequest else { return }
+    RestClient.shared.send(request: request) { result in
+      switch result {
+        case .success(let response):
+          do {
+              let decoder = JSONDecoder()
+            let wrapper = try decoder.decode(SFResponse<Record>.self, from: response.asData())
+            completionBlock(.success(wrapper.records))
+          } catch {
+            completionBlock(.success([Record]()))
+        }
+        case .failure(let err):
+          completionBlock(.failure(err))
+      }
+    }
+  }
+
+  func fetchRecords<Record: Decodable>(ofModelType: Record.Type,
+                                       forQuery query: String,
+                                       withApiVersion version: String? = SFRestDefaultAPIVersion,
+                                       _ completionBlock: @escaping (Result<[Record], RestClientError>) -> Void) {
+    let request = RestClient.shared.request(forQuery: query, apiVersion: version)
+    guard request.isQueryRequest else { return }
+    return self.fetchRecords(ofModelType: ofModelType, forRequest: request, completionBlock)
+  }
+
+}
+
+extension RestRequest {
+
+  /// Calculated property to determine if this request is a data retrieval request with a SOQL query.
+  /// All such queries will return a JSON decodable QueryResponseWrapper.
+  /// Implied contract is that all requests matching both properties here will be decodable via QueryResponseWrapper<Record>
+  public var isQueryRequest: Bool {
+    get {
+      return self.method == .GET && self.path.lowercased().hasSuffix("query")
+    }
   }
 
 }
